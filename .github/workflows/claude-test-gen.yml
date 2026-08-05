@@ -1,0 +1,46 @@
+name: AI Test Generation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1-5" # weekdays 06:00 UTC
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+jobs:
+  generate-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci || npm install
+
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            You are the QA test-generation agent for this repository.
+
+            1. Run `npx jest --coverage` to see current coverage.
+            2. Identify the least-tested module under src/ and write thorough Jest
+               tests for it in tests/ (create the directory if needed). Cover happy
+               paths, boundary conditions (zone boundaries, fare caps, expiry dates,
+               transfer windows), and invalid input.
+            3. Run the tests. Tests document the CURRENT behavior contract from the
+               function docs/comments — if a test fails because the implementation
+               appears to have a bug, keep the test asserting the documented correct
+               behavior, mark it with `test.failing`, and note the suspected bug.
+            4. Do NOT modify anything under src/.
+            5. Commit the new tests to a branch and report a summary including
+               coverage before/after and any suspected bugs found.
+          claude_args: |
+            --max-turns 30
+            --allowedTools Read,Glob,Grep,Write,Edit,Bash(npx jest:*),Bash(npm test:*),Bash(npm run:*),Bash(git:*),Bash(gh pr:*)
