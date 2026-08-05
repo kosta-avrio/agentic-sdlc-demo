@@ -13,6 +13,7 @@ export interface FareConfig {
   perZoneSurcharge: number; // dollars per additional zone
   transferWindowMinutes: number;
   dailyCap: number;         // dollars
+  peakMultiplier?: number; // optional multiplier for peak hours
 }
 
 export const DEFAULT_CONFIG: FareConfig = {
