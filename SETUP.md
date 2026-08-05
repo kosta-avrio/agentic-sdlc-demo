@@ -12,12 +12,23 @@ gh repo create agentic-sdlc-demo --public --source=. --push
 
 https://github.com/apps/claude → Install → select the `agentic-sdlc-demo` repo.
 
-## 3. Add your Anthropic API key as a repo secret
+## 3. Add your Claude credentials as a repo secret
+
+**Max/Pro subscription (no API billing needed):** generate a long-lived OAuth token
+from your subscription, then store it:
 
 ```bash
-gh secret set ANTHROPIC_API_KEY --repo <your-username>/agentic-sdlc-demo
-# paste your key when prompted (console.anthropic.com → API keys)
+claude setup-token          # in your terminal; opens browser, prints a token
+gh secret set CLAUDE_CODE_OAUTH_TOKEN --repo <your-username>/agentic-sdlc-demo
+# paste the token when prompted
 ```
+
+Action runs draw from your Max usage limits, not a separate bill.
+
+**Alternative (pay-as-you-go API key):** create a key at platform.claude.com
+(Anthropic Console — separate account/billing from claude.ai), store it as
+`ANTHROPIC_API_KEY`, and switch the workflows' `claude_code_oauth_token:` line back to
+`anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}`.
 
 ## 4. Trigger the AI code review (the money demo)
 
