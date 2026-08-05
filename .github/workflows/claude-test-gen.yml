@@ -3,7 +3,7 @@ name: AI Test Generation
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 6 * * 1-5" # weekdays 06:00 UTC
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC (runs draw from Max subscription usage)
 
 permissions:
   contents: write
